@@ -1,0 +1,139 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+      - id: ORDER-SERVICE
+        uri:
+          lb://ORDER-SERVICE
+        predicates:
+        - Path= /order/**,/order/lineitem/**  
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: ORDER-SERVICE
+            fallbackuri: forward:/orderServiceFallback
+      - id: CART-SERVICE
+        uri:
+          lb://CART-SERVICE
+        predicates:
+        - Path= /cart/**,/cart/lineitem/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: CART-SERVICE
+            fallbackuri: forward:/cartServiceFallback          
+      - id: PRODUCT-SERVICE
+        uri:
+          lb://PRODUCT-SERVICE
+        predicates:
+        - Path= /product/** 
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: PRODUCT-SERVICE
+            fallbackuri: forward:/productServiceFallback        
+      - id: INVENTORY-SERVICE
+        uri:
+          lb://INVENTORY-SERVICE
+        predicates:
+        - Path= /inventory/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: INVENTORY-SERVICE
+            fallbackuri: forward:/inventoryServiceFallback            	
+      - id: CUSTOMER-SERVICE
+        uri:
+          lb://CUSTOMER-SERVICE
+        predicates:
+        - Path= /customer/**,/address/**  
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: CUSTOMER-SERVICE
+            fallbackuri: forward:/customerServiceFallback                
+      - id: SHIPPING-SERVICE
+        uri:
+          lb://SHIPPING-SERVICE
+        predicates:
+        - Path= /shippingservice/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: SHIPPING-SERVICE
+            fallbackuri: forward:/shippingServiceFallback         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#server.port=8010
+#spring.application.name=APIGATEWAY
+#spring.cloud.gateway.discovery.locator.enabled=true
+#eureka.client.fetch-registry=true
+#eureka.client.register-with-eureka=true
+##eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+#
+#eureka.instance.hostname=localhost
+#eureka.client.serviceUrl.defaultZone=http://${eureka.instance.hostname}:8761/eureka/
+
+#
+#spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+#
+#spring.cloud.gateway.routes[0].id=SHIPPING-SERVICE
+##spring.cloud.gateway.routes[0].uri=http://localhost:8090
+#spring.cloud.gateway.routes[0].uri=lb://SHIPPING-SERVICE
+#spring.cloud.gateway.routes[0].predicates[0]=Path=/shippingservice/**
+#                                                  
+#
+#spring.cloud.gateway.routes[1].id=PRODUCT-SERVICE
+##spring.cloud.gateway.routes[1].uri=http://localhost:8091
+#spring.cloud.gateway.routes[1].uri=lb://PRODUCT-SERVICE
+#spring.cloud.gateway.routes[1].predicates[0]=Path=/product/**
+##
+#spring.cloud.gateway.routes[2].id=CUSTOMER-SERVICE
+##spring.cloud.gateway.routes[1].uri=http://localhost:8091
+#spring.cloud.gateway.routes[2].uri=lb://CUSTOMER-SERVICE
+#spring.cloud.gateway.routes[2].predicates[0]=Path=/customer/**
+#
+#
+#spring.cloud.gateway.routes[3].id=CART-SERVICE
+##spring.cloud.gateway.routes[1].uri=http://localhost:8091
+#spring.cloud.gateway.routes[3].uri=lb://CART-SERVICE
+#spring.cloud.gateway.routes[3].predicates[0]=Path=/cart/**
+#
+#spring.cloud.gateway.routes[4].id=INVENTORY-SERVICE
+##spring.cloud.gateway.routes[1].uri=http://localhost:8091
+#spring.cloud.gateway.routes[4].uri=lb://INVENTORY-SERVICE
+#spring.cloud.gateway.routes[4].predicates[0]=Path=/inventory/**
+#
+#spring.cloud.gateway.routes[5].id=ORDER-SERVICE
+##spring.cloud.gateway.routes[1].uri=http://localhost:8091
+#spring.cloud.gateway.routes[5].uri=lb://ORDER-SERVICE
+#spring.cloud.gateway.routes[5].predicates[0]=Path=/order/**
+
+
+
+
+
+
+

@@ -1,0 +1,91 @@
+
+server:
+  port: 8086
+  
+spring:
+  application:
+    name: SHIPPING-SERVICE
+  config:
+    import:
+    - configserver:http://localhost:8000 
+#  cloud:
+#    openfeign:
+#      circuitbreaker:
+#        enabled: true
+# 
+#
+resilience4j:
+  retry:
+    instances:
+      myretry:
+        ignore-exceptions:
+           - com.onlinestore.shipping.Exceptions.CustomException2
+          
+        max-attempts: 3
+        wait-duration: 10s
+    
+        
+  circuitbreaker:
+    circuit-breaker-aspect-order: 1
+    instances:
+      external:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        failureRateThreshold: 60
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 5
+        waitDurationInOpenState: 5s
+        slidingWindowType: COUNT_BASED
+        record-exceptions:
+          - com.onlinestore.shipping.Exceptions.ServiceUnavailableException
+        ignore-exceptions:
+          - com.onlinestore.shipping.Exceptions.CustomException2
+          
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    '[com.onlinestore.shipping]': info 
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+  
+    
+#server.port=8086
+#
+#spring.application.name=SHIPPING-SERVICE
+#
+#spring.config.import=configserver:http://localhost:8000
+#
+#spring.cloud.openfeign.circuitbreaker.enabled=true
+#
+#management.health.circuitbreakers.enabled=true
+#management.endpoint.health.show-details=always
+#management.endpoints.web.exposure.include=health,metrics
+#resilience4j.circuitbreaker.instances.external.automatic-transition-from-open-to-half-open-enabled=true
+#resilience4j.circuitbreaker.instances.external.register-health-indicator=true
+#resilience4j.circuitbreaker.instances.external.failure-rate-threshold=50
+#resilience4j.circuitbreaker.instances.external.minimum-number-of-calls=10
+#resilience4j.circuitbreaker.instances.external.sliding-window-type=TIME_BASED
+#resilience4j.circuitbreaker.instances.external.sliding-window-size=10
+#resilience4j.circuitbreaker.instances.external.wait-duration-in-open-state=1000s
+#resilience4j.circuitbreaker.instances.external.permitted-number-of-calls-in-half-open-state=3    
+      
+      
+      
+      
+      
